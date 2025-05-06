@@ -1,0 +1,10 @@
+services:
+  db:
+    image: postgres:latest
+    ports:
+      - "5431:5432"
+    restart: always
+    environment:
+      POSTGRES_DB: tasks
+      POSTGRES_USER: hfa
+      POSTGRES_PASSWORD: changeinprod
