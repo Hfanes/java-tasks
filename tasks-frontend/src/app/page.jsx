@@ -43,7 +43,6 @@ export default function Home() {
     try {
       const response = await fetch("http://localhost:8080/task-lists");
       const data = await response.json();
-      console.log("fetch tasks lists", data);
       setTaskLists(data);
     } catch (error) {
       console.log("Error fetching taskslist", error);
@@ -59,18 +58,11 @@ export default function Home() {
         taskLists={taskLists}
       />
       {selectedTaskList ? (
-        <>
-          <Tasks
-            selectedTaskList={selectedTaskList}
-            tasks={tasks}
-            setTasks={setTasks}
-          />
-          <TaskAI
-            selectedTaskList={selectedTaskList}
-            tasks={tasks}
-            setTasks={setTasks}
-          />
-        </>
+        <Tasks
+          selectedTaskList={selectedTaskList}
+          tasks={tasks}
+          setTasks={setTasks}
+        />
       ) : (
         <p className="flex-grow p-8 flex items-center justify-center text-gray-500">
           Please select a task list to view its tasks

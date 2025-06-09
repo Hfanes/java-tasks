@@ -18,11 +18,9 @@ export default function TaskLists({
     description: "",
   });
 
-  if (taskLists.length === 0) {
-    return <p className="text-muted-foreground">No task lists found</p>;
-  }
-
-  const handleCreateTaskList = async () => {
+  const handleCreateTaskList = async (e) => {
+    e.stopPropagation(); // don't trigger parent's click
+    e.preventDefault(); // don't submit form or reload
     try {
       const response = await fetch("http://localhost:8080/task-lists", {
         method: "POST",
@@ -113,7 +111,7 @@ export default function TaskLists({
     }
   };
   return (
-    <div className="w-64 bg-white border-r border-gray-200 p-4 flex flex-col h-screen">
+    <div className="w-100 bg-white border-r border-gray-200 p-4 flex flex-col h-screen">
       <h2 className="text-xl font-bold mb-4">Task Lists</h2>
       {taskLists.map((taskList) => (
         <ul
@@ -175,7 +173,7 @@ export default function TaskLists({
                 </p>
               </div>
 
-              <div className="flex items-center gap-1 ml-2">
+              <div className="flex items-center gap-1">
                 <button
                   className="text-gray-400 cursor-pointer  hover:text-blue-500 transition"
                   title="Edit"
@@ -184,8 +182,9 @@ export default function TaskLists({
                     handleEditTaskList(e, taskList);
                   }}
                 >
-                  edit /
+                  edit
                 </button>
+                /
                 <button
                   className="text-gray-400 cursor-pointer hover:text-red-500 transition"
                   title="Delete"
@@ -239,9 +238,9 @@ export default function TaskLists({
       ) : (
         <button
           onClick={() => setIsCreating(true)}
-          className="mt-4 flex items-center text-gray-600 hover:text-gray-900"
+          className="mt-4 flex items-center text-gray-600 hover:text-gray-900 cursor-pointer"
         >
-          <div className="w-4 h-4 mr-1" />
+          <div className="w-4 h-4 mr-1 " />
           Add new list
         </button>
       )}

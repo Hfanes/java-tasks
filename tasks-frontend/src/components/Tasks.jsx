@@ -120,6 +120,7 @@ export default function Tasks({ tasks, setTasks, selectedTaskList }) {
         tasks.map((task) => (task.id === editingTaskId ? updatedTask : task))
       );
       setEditingTaskId(null);
+      setIsCreating(false);
     } catch (error) {
       console.log("Error updating task", error);
     }
@@ -153,84 +154,95 @@ export default function Tasks({ tasks, setTasks, selectedTaskList }) {
   };
 
   return (
-    <div className="flex-grow p-8">
+    <div className="flex-grow p-8 max-w-4xl mx-auto">
       <h1 className="text-2xl font-bold mb-6">{selectedTaskList.title}</h1>
 
-      <div className="space-y-2 mb-8">
+      <div className="space-y-2 mb-8 max-w-2xl">
         {tasks.length === 0 ? (
           <p className="text-gray-500">No tasks yet. Add one below!</p>
         ) : (
           tasks.map((task) => (
-            <ul
+            <li
               key={task.id}
-              className="w-full flex items-center justify-between py-2 px-2 hover:bg-gray-100 rounded border rounded-md"
+              className="flex items-center gap-4 p-4 hover:bg-gray-100 rounded border rounded-md "
             >
               {editingTaskId === task.id ? (
                 //Editing
                 <>
                   <form
+                    className="w-full space-y-3"
                     onSubmit={(e) => {
                       e.preventDefault();
                       handleEditFormSubmit(task.id);
                     }}
                   >
-                    <input
-                      type="checkbox"
-                      checked={editFormData.taskStatus === "CLOSED"}
-                      onChange={(e) =>
-                        setEditFormData({
-                          ...editFormData,
-                          taskStatus: e.target.checked ? "CLOSED" : "OPEN",
-                        })
-                      }
-                    />
-                    <input
-                      type="text"
-                      name="title"
-                      required
-                      value={editFormData.title}
-                      onChange={handleEditFormChange}
-                      className="text-sm px-2 py-1 border rounded"
-                    />
-                    <input
-                      type="text"
-                      name="description"
-                      value={editFormData.description}
-                      onChange={handleEditFormChange}
-                      className="text-sm px-2 py-1 border rounded"
-                    />
-                    <input
-                      type="datetime-local"
-                      name="dueDate"
-                      value={editFormData.dueDate}
-                      onChange={handleEditFormChange}
-                      className="text-sm px-2 py-1 border rounded"
-                    />
-                    <label>
-                      Priority:
-                      <select
-                        name="taskPriority"
-                        value={editFormData.taskPriority}
-                        onChange={(e) => setTaskPriority(e.target.value)}
-                      >
-                        <option value="LOW">Low</option>
-                        <option value="MEDIUM">Medium</option>
-                        <option value="HIGH">High</option>
-                      </select>
-                    </label>
-                    <button
-                      type="submit"
-                      className="text-green-600 hover:text-green-800 font-medium mr-2"
-                    >
-                      Save
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleCancelClick}
-                      className="text-gray-600 hover:text-gray-800 font-medium"
-                    >
-                      Cancel
-                    </button>
+                    <div className="flex items-center space-x-4">
+                      <input
+                        type="checkbox"
+                        checked={editFormData.taskStatus === "CLOSED"}
+                        onChange={(e) =>
+                          setEditFormData({
+                            ...editFormData,
+                            taskStatus: e.target.checked ? "CLOSED" : "OPEN",
+                          })
+                        }
+                      />
+                      <input
+                        type="text"
+                        name="title"
+                        required
+                        value={editFormData.title}
+                        onChange={handleEditFormChange}
+                        className="text-sm px-2 py-1 border rounded"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <input
+                        type="text"
+                        name="description"
+                        value={editFormData.description}
+                        onChange={handleEditFormChange}
+                        className="text-sm px-2 py-1 border rounded"
+                      />
+                      <input
+                        type="datetime-local"
+                        name="dueDate"
+                        value={editFormData.dueDate}
+                        onChange={handleEditFormChange}
+                        className="text-sm px-2 py-1 border rounded"
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <label>
+                        Priority:
+                        <select
+                          name="taskPriority"
+                          value={editFormData.taskPriority}
+                          onChange={(e) => setTaskPriority(e.target.value)}
+                        >
+                          <option value="LOW">Low</option>
+                          <option value="MEDIUM">Medium</option>
+                          <option value="HIGH">High</option>
+                        </select>
+                      </label>
+
+                      <div className="space-x-2 mr-2">
+                        <button
+                          type="submit"
+                          className="text-green-600 hover:text-green-800 font-medium mr-4"
+                        >
+                          Save
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleCancelClick}
+                          className="text-gray-600 hover:text-gray-800 font-medium"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
                   </form>
                 </>
               ) : (
@@ -238,48 +250,97 @@ export default function Tasks({ tasks, setTasks, selectedTaskList }) {
                 <>
                   {task.taskStatus === "CLOSED" ? (
                     //If finnish only shows title & view more
-                    <div className="text-left overflow-hidden">
-                      <form>
+                    <div className="flex w-full items-center space-x-4">
+                      <input
+                        type="checkbox"
+                        checked={task.taskStatus === "CLOSED"}
+                        onChange={() => handleToggleComplete(task)}
+                      />
+                      <div className="text-left overflow-hidden">
+                        <h3
+                          className={
+                            task.taskStatus === "CLOSED"
+                              ? "line-through text-gray-400"
+                              : ""
+                          }
+                        >
+                          {task.title}
+                        </h3>
+                        <a
+                          className="cursor-pointer"
+                          onClick={() => {
+                            setViewMore(!viewMore);
+                          }}
+                        >
+                          View more
+                        </a>
+                        {viewMore && (
+                          <>
+                            <div className="text-left overflow-hidden">
+                              <p className="text-xs text-gray-500 truncate">
+                                {task.description}
+                              </p>
+                              <p className="text-xs text-gray-500 truncate">
+                                {task.dueDate}
+                              </p>
+                              <p className="text-xs text-gray-500 truncate">
+                                {task.taskPriority}
+                              </p>
+                              <p className="text-xs text-gray-500 truncate">
+                                {task.taskStatus}
+                              </p>
+                            </div>
+
+                            <div className="flex items-center gap-1 ml-2">
+                              <button
+                                className="text-gray-400 cursor-pointer  hover:text-blue-500 transition"
+                                title="Edit"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleEditTask(e, task);
+                                }}
+                              >
+                                edit /
+                              </button>
+                              <button
+                                className="text-gray-400 cursor-pointer hover:text-red-500 transition"
+                                title="Delete"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDeleteTask(task.id);
+                                }}
+                              >
+                                delete
+                              </button>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    //Not finnished all status displayed
+                    <>
+                      <div className="flex w-full items-center space-x-4 ">
                         <input
                           type="checkbox"
                           checked={task.taskStatus === "CLOSED"}
                           onChange={() => handleToggleComplete(task)}
                         />
-                      </form>
-                      <h3
-                        className={
-                          task.taskStatus === "CLOSED"
-                            ? "line-through text-gray-400"
-                            : ""
-                        }
-                      >
-                        {task.title}
-                      </h3>
-                      <a
-                        onClick={() => {
-                          setViewMore(!viewMore);
-                        }}
-                      >
-                        View more
-                      </a>
-                      {viewMore && (
-                        <>
-                          <div className="text-left overflow-hidden">
-                            <p className="text-xs text-gray-500 truncate">
-                              {task.description}
-                            </p>
-                            <p className="text-xs text-gray-500 truncate">
-                              {task.dueDate}
-                            </p>
-                            <p className="text-xs text-gray-500 truncate">
-                              {task.taskPriority}
-                            </p>
-                            <p className="text-xs text-gray-500 truncate">
-                              {task.taskStatus}
-                            </p>
-                          </div>
-
-                          <div className="flex items-center gap-1 ml-2">
+                        <div className="text-left overflow-hidden">
+                          <h3 className="truncate">{task.title}</h3>
+                          <p className="text-gray-500 truncate">
+                            {task.description}
+                          </p>
+                          <p className="text-xs text-gray-500 truncate">
+                            {task.dueDate}
+                          </p>
+                          <p className="text-xs text-gray-500 truncate">
+                            {task.taskPriority}
+                          </p>
+                          <p className="text-xs text-gray-500 truncate">
+                            {task.taskStatus}
+                          </p>
+                          <div className="flex items-center gap-1">
                             <button
                               className="text-gray-400 cursor-pointer  hover:text-blue-500 transition"
                               title="Edit"
@@ -288,8 +349,9 @@ export default function Tasks({ tasks, setTasks, selectedTaskList }) {
                                 handleEditTask(e, task);
                               }}
                             >
-                              edit /
+                              Edit
                             </button>
+                            /
                             <button
                               className="text-gray-400 cursor-pointer hover:text-red-500 transition"
                               title="Delete"
@@ -298,63 +360,16 @@ export default function Tasks({ tasks, setTasks, selectedTaskList }) {
                                 handleDeleteTask(task.id);
                               }}
                             >
-                              delete
+                              Delete
                             </button>
                           </div>
-                        </>
-                      )}
-                    </div>
-                  ) : (
-                    //Not finnished all displayed
-                    <>
-                      <input
-                        type="checkbox"
-                        checked={task.taskStatus === "CLOSED"}
-                        onChange={() => handleToggleComplete(task)}
-                      />
-                      <div className="text-left overflow-hidden">
-                        <h3 className="font-medium truncate">{task.title}</h3>
-                        <p className="text-xs text-gray-500 truncate">
-                          {task.description}
-                        </p>
-                        <p className="text-xs text-gray-500 truncate">
-                          {task.dueDate}
-                        </p>
-                        <p className="text-xs text-gray-500 truncate">
-                          {task.taskPriority}
-                        </p>
-                        <p className="text-xs text-gray-500 truncate">
-                          {task.taskStatus}
-                        </p>
-                      </div>
-
-                      <div className="flex items-center gap-1 ml-2">
-                        <button
-                          className="text-gray-400 cursor-pointer  hover:text-blue-500 transition"
-                          title="Edit"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleEditTask(e, task);
-                          }}
-                        >
-                          edit /
-                        </button>
-                        <button
-                          className="text-gray-400 cursor-pointer hover:text-red-500 transition"
-                          title="Delete"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteTask(task.id);
-                          }}
-                        >
-                          delete
-                        </button>
+                        </div>
                       </div>
                     </>
                   )}
                 </>
               )}
-            </ul>
+            </li>
           ))
         )}
       </div>
@@ -386,13 +401,14 @@ export default function Tasks({ tasks, setTasks, selectedTaskList }) {
           <label>
             Priority:
             <select
+              className="m-2"
               name="taskPriority"
               value={taskPriority}
               onChange={(e) => setTaskPriority(e.target.value)}
             >
-              <option value="LOW">Low</option>
-              <option value="MEDIUM">Medium</option>
-              <option value="HIGH">High</option>
+              <option value="LOW"> Low</option>
+              <option value="MEDIUM"> Medium</option>
+              <option value="HIGH"> High</option>
             </select>
           </label>
           <div className="flex space-x-2">
