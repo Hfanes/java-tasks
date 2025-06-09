@@ -1,5 +1,5 @@
 # Build stage
-FROM openjdk:25-jdk-slim
+FROM openjdk:21-jdk-slim
 WORKDIR /app
 COPY pom.xml .
 COPY src ./src
