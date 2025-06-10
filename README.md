@@ -12,7 +12,6 @@ A full-stack Task Management application built with:
 
 - Create, edit, delete task lists
 - View and manage tasks within each list
-- Responsive UI with Tailwind CSS
 - RESTful API built with Spring Boot
 - PostgreSQL for persistent storage
 
@@ -21,7 +20,7 @@ A full-stack Task Management application built with:
 ### 1. Clone the Repo
 
 ```bash
-git clone https://github.com/Hfanes/java-blog
+git clone https://github.com/Hfanes/java-tasks
 cd java-tasks
 ```
 
