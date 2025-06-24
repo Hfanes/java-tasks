@@ -1,12 +1,15 @@
 # Build stage
-FROM maven:3.9.4-openjdk-21-slim as builder
+FROM openjdk:21-jdk-slim as builder
 WORKDIR /app
 COPY pom.xml .
 COPY src ./src
+
+# Install Maven
+RUN apt-get update && apt-get install -y maven && rm -rf /var/lib/apt/lists/*
 RUN mvn clean package -DskipTests
 
 # Run stage
-FROM openjdk:21-jre-slim
+FROM openjdk:21-jdk-slim
 WORKDIR /app
 COPY --from=builder /app/target/*.jar app.jar
 EXPOSE 8080
