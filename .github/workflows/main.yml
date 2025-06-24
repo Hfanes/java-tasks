@@ -1,0 +1,29 @@
+name: Build and Run Docker App
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "0 3 * * *" # every day at 3AM UTC
+
+#Jobs run in parallel
+jobs:
+  #cleanup:
+  #  runs-on: ubuntu-latest
+  #  steps:
+  #    - uses: actions/checkout@v3
+  #    - name: Run Cleanup
+  #      run: python scripts/cleanlogs.py
+
+  build:
+    #needs: cleanup
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Make deploy.sh executable and run it
+        run: |
+          chmod +x scripts/deploy.sh
+          ./scripts/deploy.sh
