@@ -1,13 +1,13 @@
 # Build stage
-FROM openjdk:21-jdk-slim
+FROM maven:3.9.4-openjdk-21-slim as builder
 WORKDIR /app
 COPY pom.xml .
 COPY src ./src
 RUN mvn clean package -DskipTests
 
 # Run stage
-FROM openjdk:21-jdk-slim
+FROM openjdk:21-jre-slim
 WORKDIR /app
-COPY target/*.jar app.jar
+COPY --from=builder /app/target/*.jar app.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
