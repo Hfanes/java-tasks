@@ -23,7 +23,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Make deploy.sh executable and run it
+      - name: Debug Docker versions
         run: |
-          chmod +x scripts/deploy.sh
-          ./scripts/deploy.sh
+          docker --version
+          docker compose version
+          which docker
+          ls -la /usr/bin/docker*
+
+      #- name: Make deploy.sh executable and run it
+      #  run: |
+      #    chmod +x scripts/deploy.sh
+      #    ./scripts/deploy.sh
+      - name: Build and run app
+        run: |
+          docker compose build
+          docker compose up -d
+      - name: Check if containers are running
+        run: docker ps
