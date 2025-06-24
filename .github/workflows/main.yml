@@ -3,8 +3,8 @@ name: Build and Run Docker App
 on:
   push:
     branches: [main]
-  schedule:
-    - cron: "0 3 * * *" # every day at 3AM UTC
+  #schedule:
+  #  - cron: "0 3 * * *" # every day at 3AM UTC
 
 #Jobs run in parallel
 jobs:
